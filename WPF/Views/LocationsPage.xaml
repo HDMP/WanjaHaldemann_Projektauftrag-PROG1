@@ -1,0 +1,10 @@
+﻿<UserControl x:Class="SwissAddressManager.WPF.Views.LocationsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#1e1e1e">
+    <Grid Margin="10">
+        <DataGrid x:Name="AddressDataGrid" AutoGenerateColumns="True" HeadersVisibility="Column"
+                  Background="#2d2d30" Foreground="White" BorderBrush="Transparent" RowBackground="Transparent"
+                  AlternatingRowBackground="#2e2e34" ColumnHeaderHeight="40" FontFamily="Segoe UI" FontSize="14"/>
+    </Grid>
+</UserControl>
