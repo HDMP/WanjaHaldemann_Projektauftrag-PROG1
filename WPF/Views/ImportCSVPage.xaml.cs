@@ -2,15 +2,19 @@
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
+using SwissAddressManager.Data.DatabaseContext;
 using SwissAddressManager.Helpers;
 
 namespace SwissAddressManager.WPF.Views
 {
     public partial class ImportCSVPage : UserControl
     {
-        public ImportCSVPage()
+        private readonly AppDbContext _context;
+
+        public ImportCSVPage(AppDbContext context)
         {
             InitializeComponent();
+            _context = context;
         }
 
         private void SelectCSV_Click(object sender, RoutedEventArgs e)

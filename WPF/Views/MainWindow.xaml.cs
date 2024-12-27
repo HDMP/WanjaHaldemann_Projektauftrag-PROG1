@@ -18,7 +18,7 @@ namespace SwissAddressManager.WPF.Views
             MainContentArea.Content = new DashboardPage();
 
             // Test database connection
-            TestDatabaseConnection();
+            //TestDatabaseConnection();
         }
 
         private void TestDatabaseConnection()
@@ -50,12 +50,12 @@ namespace SwissAddressManager.WPF.Views
 
         private void BtnImportCSV_Click(object sender, RoutedEventArgs e)
         {
-            MainContentArea.Content = new ImportCSVPage();
+            MainContentArea.Content = new ImportCSVPage(_context);
         }
 
         private void BtnLocations_Click(object sender, RoutedEventArgs e)
         {
-            MainContentArea.Content = new LocationsPage();
+            MainContentArea.Content = new LocationsPage(_context);
         }
 
         private void BtnAddress_Click(object sender, RoutedEventArgs e)
