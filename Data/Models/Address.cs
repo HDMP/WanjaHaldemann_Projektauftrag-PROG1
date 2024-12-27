@@ -11,10 +11,11 @@ namespace SwissAddressManager.Data.Models
         public string LastName { get; set; }
         public string Street { get; set; }
         public string HouseNumber { get; set; }
+        public string Company { get; set; }
 
         // Foreign Key to Locations
         [ForeignKey("Location")]
-        public int? PostalCodeID { get; set; } // Matches the database column name
-        public virtual Location Location { get; set; } // Navigation property
+        public int? PostalCodeID { get; set; }
+        public virtual Location Location { get; set; }
     }
 }

@@ -5,14 +5,16 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using SwissAddressManager.Services.Interfaces;
 
 namespace SwissAddressManager.WPF.Views
 {
-    public partial class LocationsPage : UserControl
+    public partial class LocationsPage : UserControl, IUnsavedChangesPage
     {
         private readonly AppDbContext _context;
         private ObservableCollection<Location> _locations;
         private bool _isEditing = false;
+        private bool _hasUnsavedChanges = false;
 
         public LocationsPage(AppDbContext context)
         {
@@ -21,12 +23,40 @@ namespace SwissAddressManager.WPF.Views
             LoadData();
         }
 
+        public bool HasUnsavedChanges => _hasUnsavedChanges;
+
+        public void ResetUnsavedChanges()
+        {
+            _hasUnsavedChanges = false;
+        }
+
+        public bool ConfirmUnsavedChanges()
+        {
+            if (_hasUnsavedChanges)
+            {
+                var result = MessageBox.Show(
+                    "You have unsaved changes. Do you want to discard them?",
+                    "Unsaved Changes",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                return result == MessageBoxResult.Yes;
+            }
+            return true;
+        }
+
+        private void MarkAsUnsaved()
+        {
+            _hasUnsavedChanges = true;
+        }
+
         private void LoadData()
         {
             // Load data from database into ObservableCollection
             var locations = _context.Locations.ToList();
             _locations = new ObservableCollection<Location>(locations);
             LocationsDataGrid.ItemsSource = _locations;
+            ResetUnsavedChanges(); // Clear unsaved changes after data is loaded
         }
 
         private void FilterButton_Click(object sender, RoutedEventArgs e)
@@ -52,6 +82,7 @@ namespace SwissAddressManager.WPF.Views
             _isEditing = true;
             LocationsDataGrid.IsReadOnly = false;
             ToggleButtons();
+            MarkAsUnsaved();
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -70,6 +101,7 @@ namespace SwissAddressManager.WPF.Views
 
                 _context.SaveChanges();
                 MessageBox.Show("Changes saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                ResetUnsavedChanges(); // Clear unsaved changes after saving
             }
             catch (Exception ex)
             {
@@ -86,10 +118,13 @@ namespace SwissAddressManager.WPF.Views
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            _isEditing = false;
-            LocationsDataGrid.IsReadOnly = true;
-            LoadData(); // Revert changes by reloading data
-            ToggleButtons();
+            if (ConfirmUnsavedChanges())
+            {
+                _isEditing = false;
+                LocationsDataGrid.IsReadOnly = true;
+                LoadData(); // Revert changes by reloading data
+                ToggleButtons();
+            }
         }
 
         private void ToggleButtons()

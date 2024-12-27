@@ -3,17 +3,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Background="#1e1e1e">
     <Grid>
-        <StackPanel Margin="10">
-            <Button Content="Select CSV File" Width="150" Height="30" Click="SelectCSV_Click"
-                    Background="#3A3A3A" Foreground="White" HorizontalAlignment="Left"/>
-            <DataGrid x:Name="CSVDataGrid" AutoGenerateColumns="True" HeadersVisibility="Column" 
-                      Background="#2d2d30" Foreground="White" 
-                      BorderBrush="Transparent" RowBackground="Transparent"
-                      AlternatingRowBackground="#2e2e34" ColumnHeaderHeight="40"
-                      FontFamily="Segoe UI" FontSize="14" Margin="0,20,0,0"/>
-            <Button Content="Save to Database" Width="150" Height="30" Background="#3A3A3A" 
-                    Foreground="White" HorizontalAlignment="Left" Margin="0,20,0,0"
-                    Click="SaveToDatabase_Click"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- File Selection -->
+        <StackPanel Orientation="Horizontal" Margin="10" Grid.Row="0">
+            <Button Content="Select CSV File" Style="{StaticResource ModernButtonStyle}" Click="SelectCSV_Click"/>
+            <TextBlock x:Name="FileNameTextBlock" Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- DataGrid for displaying CSV -->
+        <DataGrid x:Name="CSVDataGrid" AutoGenerateColumns="False" Style="{StaticResource ModernDataGridStyle}" Grid.Row="1"
+                  CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="False" Margin="10">
+            <DataGrid.Columns>
+                <!-- Dynamically added in code -->
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Buttons -->
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="10" HorizontalAlignment="Center">
+            <Button Content="Validate" Style="{StaticResource ModernButtonStyle}" Click="ValidateCSV_Click"
+                    Visibility="Collapsed" x:Name="ValidateButton" Margin="10,0,0,0"/>
+            <Button Content="Save to Database" Style="{StaticResource ModernButtonStyle}" Click="SaveToDatabase_Click"
+                    Visibility="Collapsed" x:Name="SaveToDatabaseButton" Margin="10,0,0,0"/>
+            <Button Content="Cancel" Style="{StaticResource ModernButtonStyle}" Click="CancelCSV_Click"
+                    Visibility="Collapsed" x:Name="CancelButton" Margin="10,0,0,0"/>
         </StackPanel>
     </Grid>
 </UserControl>
