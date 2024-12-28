@@ -16,7 +16,8 @@ namespace SwissAddressManager.WPF.Views
         {
             InitializeComponent();
             _context = context;
-            MainContentArea.Content = new DashboardPage();  // Default page
+            var dashboardPage = new DashboardPage(_context); // Pass the DbContext
+            MainContentArea.Content = dashboardPage; //Default Page
         }
 
         // Helper function to confirm unsaved changes before navigating to another page
@@ -59,11 +60,10 @@ namespace SwissAddressManager.WPF.Views
         // For other buttons (Dashboard, Settings, etc.)
         private void BtnDashboard_Click(object sender, RoutedEventArgs e)
         {
-            if (ConfirmUnsavedChanges())
-            {
-                MainContentArea.Content = new DashboardPage();
-            }
+            var dashboardPage = new DashboardPage(_context); // Pass the DbContext
+            MainContentArea.Content = dashboardPage;
         }
+
 
         private void CloseWindow_Click(object sender, RoutedEventArgs e)
         {

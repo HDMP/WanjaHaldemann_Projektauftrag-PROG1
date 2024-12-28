@@ -2,7 +2,55 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Background="#1e1e1e">
-    <Grid>
-        <TextBlock Text="About Swiss Address Manager" FontSize="24" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-    </Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="20">
+            <!-- Header -->
+            <TextBlock Text="About" FontSize="24" Foreground="White" FontFamily="Segoe UI Light" Margin="10,0,0,20" />
+
+            <!-- Main Content -->
+            <StackPanel Margin="0,40,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" Width="600">
+                <!-- Application Name and Description -->
+                <TextBlock Text="Swiss Address Manager" FontSize="28" Foreground="#FFCCCCCC" FontWeight="Bold" HorizontalAlignment="Center" />
+                <TextBlock Text="Version 1.0" FontSize="16" Foreground="#FF888888" FontFamily="Segoe UI Light" HorizontalAlignment="Center" Margin="0,5,0,20" />
+                <TextBlock Text="Swiss Address Manager is an advanced tool for managing, importing, and analyzing addresses and locations efficiently. Designed for modern needs and optimized for simplicity and functionality." 
+                           FontSize="14" Foreground="#FFBBBBBB" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,20" />
+
+                <!-- Creator Information -->
+                <Border Background="#333" CornerRadius="10" Margin="0,10,0,0" Padding="20" BorderBrush="#444" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="Creator" FontSize="16" Foreground="#bbb" FontFamily="Segoe UI Semilight" />
+                        <TextBlock Text="Wanja Haldemann" FontSize="20" Foreground="White" FontWeight="Bold" />
+                        <TextBlock Text="HF GIBB Class 23B" FontSize="14" Foreground="#777" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Development and Release Info -->
+                <Border Background="#333" CornerRadius="10" Margin="0,10,0,0" Padding="20" BorderBrush="#444" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="Development Information" FontSize="16" Foreground="#bbb" FontFamily="Segoe UI Semilight" />
+                        <TextBlock Text="Developed as a part of HF GIBB curriculum." FontSize="14" Foreground="#BBB" TextWrapping="Wrap" />
+                        <TextBlock Text="Release Date: December 2024" FontSize="14" Foreground="White" FontWeight="Bold" Margin="0,5,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Contact Info -->
+                <Border Background="#333" CornerRadius="10" Margin="0,10,0,0" Padding="20" BorderBrush="#444" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="Contact" FontSize="16" Foreground="#bbb" FontFamily="Segoe UI Semilight" />
+                        <TextBlock Text="For inquiries, reach out to:" FontSize="14" Foreground="#BBB" TextWrapping="Wrap" />
+                        <TextBlock Text="Email: wanja.haldemann@example.com" FontSize="14" Foreground="White" FontWeight="Bold" Margin="0,5,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <!-- License -->
+                <Border Background="#333" CornerRadius="10" Margin="0,10,0,0" Padding="20" BorderBrush="#444" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="License" FontSize="16" Foreground="#bbb" FontFamily="Segoe UI Semilight" />
+                        <TextBlock Text="Swiss Address Manager is licensed under the MIT License. You are free to use, modify, and distribute this software as per the license terms. The software is provided 'as is', without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement." 
+                                   FontSize="14" Foreground="#BBB" TextWrapping="Wrap" TextAlignment="Justify" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

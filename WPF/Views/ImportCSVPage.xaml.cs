@@ -87,34 +87,57 @@ namespace SwissAddressManager.WPF.Views
                 var csvFilePath = openFileDialog.FileName;
                 FileNameTextBlock.Text = $"Selected File: {System.IO.Path.GetFileName(csvFilePath)}";
 
-                // Load CSV data with validation
-                var (dataTable, inconsistentRows) = CSVHelper.LoadCSVWithValidation(csvFilePath, detectSeparators: true);
+                try
+                {
+                    // Load CSV data with validation
+                    var (dataTable, inconsistentRows) = CSVHelper.LoadCSVWithValidation(csvFilePath, detectSeparators: true);
 
-                _dataTable = dataTable;
-                _columnMappings.Clear();
-                _isValidated = false;
+                    // Check if the header count matches the required number of headers
+                    if (dataTable.Columns.Count != 7) // 7 is the required number of headers
+                    {
+                        MessageBox.Show(
+                            $"The selected CSV file has {dataTable.Columns.Count} columns, but 7 are required.\n" +
+                            "Please fix the CSV file and try again.",
+                            "Invalid CSV Format",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        return; // Stop further processing
+                    }
 
-                // Populate DataGrid
-                GenerateDataGridColumns();
+                    _dataTable = dataTable;
+                    _columnMappings.Clear();
+                    _isValidated = false;
 
-                // Optionally log inconsistent rows
-                if (inconsistentRows.Any())
+                    // Populate DataGrid
+                    GenerateDataGridColumns();
+
+                    // Optionally log inconsistent rows
+                    if (inconsistentRows.Any())
+                    {
+                        MessageBox.Show(
+                            "The following rows were inconsistent and adjusted:\n" +
+                            string.Join("\n", inconsistentRows.Take(10)) + // Show only the first 10 rows for brevity
+                            (inconsistentRows.Count > 10 ? $"\n...and {inconsistentRows.Count - 10} more." : ""),
+                            "Inconsistent Rows",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Warning);
+                    }
+
+                    // Update the UI
+                    ValidateButton.Visibility = Visibility.Visible;
+                    CancelButton.Visibility = Visibility.Visible;
+                    SaveToDatabaseButton.Visibility = Visibility.Collapsed;
+
+                    MarkAsUnsaved();
+                }
+                catch (Exception ex)
                 {
                     MessageBox.Show(
-                        "The following rows were inconsistent and adjusted:\n" +
-                        string.Join("\n", inconsistentRows.Take(10)) + // Show only the first 10 rows for brevity
-                        (inconsistentRows.Count > 10 ? $"\n...and {inconsistentRows.Count - 10} more." : ""),
-                        "Inconsistent Rows",
+                        $"An error occurred while loading the CSV file:\n{ex.Message}",
+                        "Error",
                         MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
+                        MessageBoxImage.Error);
                 }
-
-                // Update the UI
-                ValidateButton.Visibility = Visibility.Visible;
-                CancelButton.Visibility = Visibility.Visible;
-                SaveToDatabaseButton.Visibility = Visibility.Collapsed;
-
-                MarkAsUnsaved();
             }
         }
 
@@ -324,7 +347,6 @@ namespace SwissAddressManager.WPF.Views
                 var rowsToAdd = new List<Address>();
                 int savedRowsCount = 0; // Counter for successfully saved rows
                 bool skipAllDuplicates = false;
-                bool overwriteAllDuplicates = false;
 
                 // Pre-check all rows for duplicates
                 foreach (DataRow row in _dataTable.Rows)
@@ -380,8 +402,8 @@ namespace SwissAddressManager.WPF.Views
                 if (duplicates.Any())
                 {
                     var result = MessageBox.Show(
-                        $"{duplicates.Count} duplicate rows found. Do you want to save these anyway?\n\n" +
-                        "Click 'Yes' to save all duplicates.\nClick 'No' to skip all duplicates.\nClick 'Cancel' to review the duplicates.",
+                        $"{duplicates.Count} duplicate rows found. Do you want to save these anyway as duplicates?\n\n" +
+                        "Click 'Yes' to save duplicates.\nClick 'No' to skip duplicates.\nClick 'Cancel' to review the duplicates.",
                         "Duplicates Found",
                         MessageBoxButton.YesNoCancel,
                         MessageBoxImage.Question);
@@ -392,54 +414,50 @@ namespace SwissAddressManager.WPF.Views
                     }
                     else if (result == MessageBoxResult.No)
                     {
-                        skipAllDuplicates = true;
+                        skipAllDuplicates = true; // Mark to skip duplicates
                     }
                     else if (result == MessageBoxResult.Yes)
                     {
-                        overwriteAllDuplicates = true;
-                    }
-                }
-
-                // Process duplicates based on user choice
-                if (overwriteAllDuplicates)
-                {
-                    foreach (var (row, existingAddress) in duplicates)
-                    {
-                        _context.Addresses.Remove(existingAddress);
-
-                        var address = new Address
+                        // Save duplicates as new rows
+                        foreach (var (row, _) in duplicates)
                         {
-                            FirstName = row[_columnMappings.FirstOrDefault(m => m.Value == "FirstName").Key]?.ToString(),
-                            LastName = row[_columnMappings.FirstOrDefault(m => m.Value == "LastName").Key]?.ToString(),
-                            Company = row[_columnMappings.FirstOrDefault(m => m.Value == "Company").Key]?.ToString(),
-                            Street = row[_columnMappings.FirstOrDefault(m => m.Value == "Street").Key]?.ToString(),
-                            HouseNumber = row[_columnMappings.FirstOrDefault(m => m.Value == "HouseNumber").Key]?.ToString(),
-                        };
+                            var address = new Address
+                            {
+                                FirstName = row[_columnMappings.FirstOrDefault(m => m.Value == "FirstName").Key]?.ToString(),
+                                LastName = row[_columnMappings.FirstOrDefault(m => m.Value == "LastName").Key]?.ToString(),
+                                Company = row[_columnMappings.FirstOrDefault(m => m.Value == "Company").Key]?.ToString(),
+                                Street = row[_columnMappings.FirstOrDefault(m => m.Value == "Street").Key]?.ToString(),
+                                HouseNumber = row[_columnMappings.FirstOrDefault(m => m.Value == "HouseNumber").Key]?.ToString(),
+                            };
 
-                        string postalCode = row[_columnMappings.FirstOrDefault(m => m.Value == "PostalCode").Key]?.ToString();
-                        string city = row[_columnMappings.FirstOrDefault(m => m.Value == "City").Key]?.ToString();
+                            string postalCode = row[_columnMappings.FirstOrDefault(m => m.Value == "PostalCode").Key]?.ToString();
+                            string city = row[_columnMappings.FirstOrDefault(m => m.Value == "City").Key]?.ToString();
 
-                        var location = GetOrCreateLocation(postalCode, city);
-                        if (location == null)
-                        {
-                            MessageBox.Show("The address could not be saved due to location issues. Please fix the CSV.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
+                            var location = GetOrCreateLocation(postalCode, city);
+                            if (location == null)
+                            {
+                                MessageBox.Show("The address could not be saved due to location issues. Please fix the CSV.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                return;
+                            }
+
+                            address.Location = location;
+                            rowsToAdd.Add(address); // Add duplicates as new rows
                         }
-
-                        address.Location = location;
-                        rowsToAdd.Add(address);
                     }
                 }
 
                 // Add non-duplicate rows
-                foreach (var address in rowsToAdd)
+                if (!skipAllDuplicates || rowsToAdd.Any())
                 {
-                    _context.Addresses.Add(address);
-                    savedRowsCount++;
-                }
+                    foreach (var address in rowsToAdd)
+                    {
+                        _context.Addresses.Add(address);
+                        savedRowsCount++;
+                    }
 
-                // Save all changes to the database
-                _context.SaveChanges();
+                    // Save all changes to the database
+                    _context.SaveChanges();
+                }
 
                 // Show success message with the number of saved rows
                 MessageBox.Show($"{savedRowsCount} rows saved to the database successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -452,7 +470,6 @@ namespace SwissAddressManager.WPF.Views
                 MessageBox.Show($"Error saving data: {ex.Message}\n\nInner Exception: {ex.InnerException?.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
 
         private Location GetOrCreateLocation(string postalCode, string city)
         {

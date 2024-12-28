@@ -5,6 +5,8 @@
         Height="700" Width="1200"
         WindowStyle="None"
         ResizeMode="NoResize"
+        MinHeight="500"
+        MinWidth="800"
         Background="#1e1e1e"
         WindowStartupLocation="CenterScreen">
 
@@ -15,8 +17,8 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="Height" Value="50"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="10,0,0,0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -24,7 +26,7 @@
                         <Grid>
                             <Border Background="{TemplateBinding Background}" CornerRadius="5">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="20" Margin="0,0,10,0"
+                                    <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="20" Margin="20,0,20,0"
                                                Text="{TemplateBinding Tag}" VerticalAlignment="Center"/>
                                     <ContentPresenter VerticalAlignment="Center"/>
                                 </StackPanel>
@@ -35,6 +37,10 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF3A3A3A"/>
+                    <Setter Property="Foreground" Value="#FFD3D3D3"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
                     <Setter Property="Background" Value="#FF444444"/>
                 </Trigger>
             </Style.Triggers>
@@ -71,8 +77,10 @@
     <Grid>
         <!-- Header -->
         <Grid Background="#2d2d30" Height="50" VerticalAlignment="Top" MouseDown="HeaderGrid_MouseDown">
-            <TextBlock Text="Swiss Address Manager" VerticalAlignment="Center" HorizontalAlignment="Center"
-                       FontSize="18" Foreground="White" FontFamily="Segoe UI" />
+            <Border BorderBrush="#444" BorderThickness="0,0,0,1">
+                <TextBlock Text="Swiss Address Manager" VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontSize="18" Foreground="White" FontFamily="Segoe UI Semilight" />
+            </Border>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                 <!-- Minimize Button -->
                 <Button Content="&#xE921;" Style="{StaticResource HeaderButtonStyle}" Click="MinimizeWindow_Click"/>
@@ -85,12 +93,12 @@
         <Grid Margin="0,50,0,0" VerticalAlignment="Stretch">
             <!-- Sidebar -->
             <StackPanel Width="200" Background="#333" HorizontalAlignment="Left" VerticalAlignment="Stretch">
-                <Button Content="Dashboard" Style="{StaticResource SidebarButtonStyle}" Tag="&#xE80F;" Click="BtnDashboard_Click"/>
-                <Button Content="Address View" Style="{StaticResource SidebarButtonStyle}" Tag="&#xE81E;" Click="BtnAddress_Click"/>
-                <Button Content="Import CSV" Style="{StaticResource SidebarButtonStyle}" Tag="&#xE8D2;" Click="BtnImportCSV_Click"/>
-                <Button Content="Locations" Style="{StaticResource SidebarButtonStyle}" Tag="&#xE8EF;" Click="BtnLocations_Click"/>
-                <Button Content="Settings" Style="{StaticResource SidebarButtonStyle}" Tag="&#xE713;" Click="BtnSettings_Click"/>
-                <Button Content="About" Style="{StaticResource SidebarButtonStyle}" Tag="&#xE946;" Click="BtnAbout_Click"/>
+                <Button Content="Dashboard" Style="{StaticResource SidebarButtonStyle}" Tag="&#xE80F;" Click="BtnDashboard_Click" Margin="5"/>
+                <Button Content="Address View" Style="{StaticResource SidebarButtonStyle}" Tag="&#xE81E;" Click="BtnAddress_Click" Margin="5"/>
+                <Button Content="Import CSV" Style="{StaticResource SidebarButtonStyle}" Tag="&#xE8D2;" Click="BtnImportCSV_Click" Margin="5"/>
+                <Button Content="Locations" Style="{StaticResource SidebarButtonStyle}" Tag="&#xE8EF;" Click="BtnLocations_Click" Margin="5"/>
+                <Button Content="Settings" Style="{StaticResource SidebarButtonStyle}" Tag="&#xE713;" Click="BtnSettings_Click" Margin="5"/>
+                <Button Content="About" Style="{StaticResource SidebarButtonStyle}" Tag="&#xE946;" Click="BtnAbout_Click" Margin="5"/>
             </StackPanel>
 
             <!-- Main Content Area -->
